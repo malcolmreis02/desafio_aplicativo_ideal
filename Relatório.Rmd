@@ -1,0 +1,285 @@
+---
+title: "Desafio - Trainee"
+author: "Malcolm dos Reis"
+date: "maio_2022"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    includes:
+      in_header: head.tex
+      before_body: body.tex
+    fig_caption: yes
+    number_sections: yes
+fontsize: 12pt
+documentclass: article
+header-includes: \AtBeginDocument{\let\maketitle\relax}
+---
+\newcommand{\namesigdate}[2][5cm]{%
+  \begin{tabular}{@{}p{#1}@{}}
+    #2 \\[2\normalbaselineskip] \hrule \\[0pt]
+  \end{tabular}
+}
+
+# Introdução
+
+Com o objetivo de escolher a melhor área para se investir em um aplicativo, analisou-se um banco de dados contendo informações de vários aplicativos divididos em 5 categorias - família, negócios, ferramentas, jogos e medicina -, em dois tipos de disponibilidade - gratuito e pago - e quatro tipos de classificação de conteúdo - acima de 10 anos, 17 anos, adolescentes e para todo mundo.
+
+Todas as medidas, o banco de dados e os gráficos foram tratados com o Rstudio. Entretanto, por causa de algumas dificuldades encontradas para fazer tudo pelo R, primeiro, esboçaram-se todos os procedimentos no Google Planilhas e, depois, foram colocados em prática no R a fim de facilitar a inserção desses gráficos no markdown, como foi recomendado pelo desafio. O mesmo aconteceu com o relatório, primeiro foi feito o rascunho no Google Documentos e, depois, foi feita a inserção das informações no relatório criado pelo Rmd.
+
+Os estudos dos gráficos foram de maior importância para a chegada à conclusão, pois como o banco de dados é muito grande, sem os gráficos não seria possível visualizar nada do que os dados queriam nos dizer.
+Assim, analisando os gráficos e as medidas estatísticas, chegou-se à conclusão de qual tipo de aplicativo seria o ideal a se investir.
+
+```{r tratamento-dos-dados, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+df = read.csv('googleplaystore.csv')
+
+#Tratamento para a plotagem dos gráficos
+Categorias = c('Ferramentas', 'Familia', 'Médico', 'Jogos', 'Mercado')
+df$Category[df$Category=='TOOLS'] = Categorias[1]
+df$Category[df$Category=='FAMILY'] = Categorias[2]
+df$Category[df$Category=='MEDICAL'] = Categorias[3]
+df$Category[df$Category=='GAME'] = Categorias[4]
+df$Category[df$Category=='BUSINESS'] = Categorias[5]
+
+df_tools = df %>%
+  filter(df$Category==Categorias[1])
+df_family = df %>%
+  filter(df$Category==Categorias[2])
+df_medical = df %>%
+  filter(df$Category==Categorias[3])
+df_game = df %>%
+  filter(df$Category==Categorias[4])
+df_business = df %>%
+  filter(df$Category==Categorias[5])
+
+options(scipen=999) # para tirar as notações científicas dos
+knitr::opts_chunk$set(size = "tiny")
+```
+
+
+\newpage
+
+# Metodologia
+Primeiramente, foi feito um rascunho do que deveria ser feito no Google Planilhas pela sua facilidade em gerar gráficos, para saber quais gráficos seriam necessários e úteis para, depois serem criados usando o R.
+
+Desse modo, no R, separou-se o banco de dados nas cinco categorias e através do sumário de cada tabela, pôde-se registrar as medidas estatísticas das avaliações e da quantidade de opiniões de cada uma das categorias.
+
+Tomou-se uma variável muito importante para as análises o número de opiniões, uma vez que, de todas as formas, esta corresponde ao tamanho do interesse do público pelo aplicativo - se a avaliação for negativa, a pessoa se interessa pela melhora deste a fim de utilizar esse aplicativo de forma mais eficiente e se a avaliação for positiva, só demonstra o interesse pelo aplicativo mesmo. Portanto, através dessa variável, decidiu-se em qual tipo de aplicativo seria mais adequado para a investigação das outras variáveis (gratuidade e classificação de conteúdo). Assim, foi feito um gráfico da média de número de opiniões por categoria, a fim de observar em qual tipo de aplicativo foi manifestado maior interesse.
+
+Após isso, foi feito o boxplot das avaliações por categoria para observar as avaliações dos clientes com cada tipo de aplicativo.
+
+Daí, sabendo qual categoria de aplicativo seria o mais ideal para a investigação, através do gráfico da média de opiniões, dividiu-se o banco de dados principal para obtermos os dados apenas desta categoria para levantar mais informações através de novos gráficos.
+
+Desse modo, foram feitos dois gráficos com as avaliações, um relacionando este com sua gratuidade a fim de saber se há diferença na satisfação do cliente com a mudança do preço a ser pago pelo aplicativo e outro relacionando este com a classificação de conteúdo para saber se há diferença na satisfação dos clientes de acordo com a classificação do aplicativo. O mesmo foi feito com o número de opiniões, foram feitos dois gráficos: um relacionado à gratuidade e outro à classificação de conteúdo.
+
+Todos os gráficos foram feitos usando o ggplot, como ensinado no treinamento de R oferecido pela Estat Jr. Segue um exemplo base - os outros foram feitos com a mesma lógica, mas com algumas mudanças - no anexo.
+
+Através desta metodologia, foi possível chegar a uma conclusão de qual tipo de aplicativo seria ideal para realizar um investimento.
+
+
+\newpage
+
+# Resultados
+Foi observado que, em todo o caso, as avaliações não influenciaram no resultado, uma vez que em todas as categorias, a distribuição dessa variável está bem parecida em todas as categorias, como visto no boxplot abaixo.
+
+```{r medias-medianas, echo=FALSE, message=FALSE, warning=FALSE}
+Medias = c(mean(df_tools$Reviews), 
+          mean(df_business$Reviews), 
+          mean(df_family$Reviews), 
+          mean(df_game$Reviews), 
+          mean(df_medical$Reviews))
+Medianas = c(median(df_tools$Reviews), 
+          median(df_business$Reviews), 
+          median(df_family$Reviews), 
+          median(df_game$Reviews), 
+          median(df_medical$Reviews))
+```
+```{r boxplot-avaliações, fig.align='center', echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.cap="Boxplot das avaliações dos aplicativos por categoria", fig.pos="H"}
+#criação do boxplot de avaliações por categoria
+ggplot(df, aes(y = df$Rating, x = df$Category)) +
+  geom_boxplot(fill = '#56B4E9', color = 'black') +
+  ylab('AVALIAÇÕES') +
+  xlab('CATEGORIAS') +
+  ggtitle('DISTRIBUIÇÃO DAS AVALIAÇÕES DOS APLICATIVOS POR CATEGORIA') +
+  theme_classic()
+```
+
+Nos outros dois gráficos que envolviam as avaliações, a média destas relacionadas à classificação de conteúdo e à gratuidade não apresentou nenhuma informação significativa para a chegada ao resultado. 
+Ao contrário disso, o número de avaliações foi fortemente usado para a obtenção do resultado. Desse modo, primeiro, foi observado que a média, bem como a mediana, do número de avaliações, dos jogos se apresentou muito maior do que as outras categorias. 
+
+
+```{r medias_categoria, fig.align='center', echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.cap="Gráfico de barras da média do número de opiniões por categoria", fig.pos="H"}
+df_bar = data.frame(medias = Medias,
+                    categorias = Categorias,
+                    medianas = Medianas)
+
+ggplot(df_bar, aes(y = df_bar$medias, x = df_bar$categorias)) +
+  geom_bar(stat = "identity", fill = '#56B4E9', color = 'black', width = .75) +
+  xlab('CATEGORIAS') +
+  ylab('MÉDIAS') +
+  ggtitle('MÉDIA DO NÚMERO DE OPINIÕES POR CATEGORIA') +
+  theme_classic()
+```
+```{r medianas_categoria, fig.align='center', echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.cap="Gráfico de barras da mediana do número de opiniões por categoria", fig.pos="H"}
+ggplot(df_bar, aes(y = df_bar$medianas, x = df_bar$categorias)) +
+  geom_bar(stat = "identity", fill = '#56B4E9', color = 'black', width = .75) +
+  xlab('CATEGORIAS') +
+  ylab('MÉDIAS') +
+  ggtitle('MEDIANA DO NÚMERO DE OPINIÕES POR CATEGORIA') +
+  theme_classic()
+```
+
+Portanto, decidiu-se que a categoria dos jogos é a melhor categoria para se investir e, assim, seguiu-se com os estudos em cima desta categoria.
+Com isso, através dos gráficos escolhidos para análise apontados na metodologia, foi observado que não há diferença significativa no nível das avaliações dos jogos com a mudança da gratuidade nem com a mudança da classificação indicativa, ou seja, segundo os gráficos, os aplicativos pagos não satisfazem muito mais do que os gratuitos.
+
+```{r avaliação_gratuidade, fig.align='center', echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.cap="Gráfico de barras da média do nível de satisfação dos jogos por gratuidade", fig.pos="H"}
+df_g3 = data.frame(gratuidade = c('Gratuitos', 'Pagos'),
+                   medias = c(mean(df_game$Rating[df_game$Type == "Free"]),
+                              mean(df_game$Rating[df_game$Type == "Paid"])
+                   )
+)
+
+ggplot(df_g3, aes(y = df_g3$medias, x = df_g3$gratuidade)) +
+  geom_bar(stat = "identity", fill = '#56B4E9', color = 'black', width = .50) +
+  xlab('SATISFAÇÃO') +
+  ylab('MÉDIAS') +
+  ggtitle('MÉDIA DO NÍVEL DE SATISFAÇÃO POR GRATUIDADE') +
+  theme_classic()
+```
+```{r avaliação_classificação, fig.align='center', echo=FALSE, message=FALSE, warning=FALSE, fig.height=4, fig.cap="Gráfico de barras da média do nível de satisfação dos jogos por classificação de conteúdo", fig.pos="H"}
+df_g4 = data.frame(classificações = c('10+', '17+', 'Todos', 'Adolecentes'),
+                   medias = c(mean(df_game$Rating[df_game$Content.Rating == "Everyone 10+"]),
+                              mean(df_game$Rating[df_game$Content.Rating == "Mature 17+"]),
+                              mean(df_game$Rating[df_game$Content.Rating == "Everyone"]),
+                              mean(df_game$Rating[df_game$Content.Rating == "Teen"]
+                              )
+                   )
+)
+
+ggplot(df_g4, aes(y = df_g4$medias, x = df_g4$classificações)) +
+  geom_bar(stat = "identity", fill = '#56B4E9', color = 'black', width = .75) +
+  xlab('CLASSIFICAÇÕES') +
+  ylab('MÉDIAS') +
+  ggtitle('NÍVEL DE SATISFAÇÃO POR CLASSIFICAÇÕES') +
+  theme_classic()
+```
+
+Logo, também nesse caso, o número de avaliações foi a variável mais importante para escolhermos essas a gratuidade e a classificação de conteúdo.
+Desse modo, foi visto que o interesse dos clientes por jogos gratuitos é muito maior do que por jogos pagos. 
+
+```{r opinião_gratuidade, fig.align='center', echo=FALSE, message=FALSE, warning = FALSE, fig.height=4, fig.cap="Gráfico de barras da média do número de opiniões dos jogos por gratuidade", fig.pos="H"}
+df_g1 = data.frame(gratuidade = c('Gratuitos', 'Pagos'),
+                  medias = c(mean(df_game$Reviews[df_game$Type == "Free"]),
+                             mean(df_game$Reviews[df_game$Type == "Paid"])
+                             )
+                  )
+
+ggplot(df_g1, aes(y = df_g1$medias, x = df_g1$gratuidade)) +
+  geom_bar(stat = "identity", fill = '#56B4E9', color = 'black', width = .50) +
+  xlab('GRATUIDADE') +
+  ylab('MÉDIAS') +
+  ggtitle('MÉDIA DO NÚMERO DE OPINIÕES POR GRATUIDADE') +
+  theme_classic()
+```
+
+Da mesma maneira, o número de avaliações por jogos para pessoas acima de 10 anos é muito maior do que para as outras classificações indicativas.
+
+```{r opinião_classificação, fig.align='center', echo=FALSE, message=FALSE, warning = FALSE, fig.height=4, fig.cap="Gráfico de barras da média do número de opiniões dos jogos por classificação de conteúdo", fig.pos="H"}
+df_g2 = data.frame(classificações = c('10+', '17+', 'Todos', 'Adolecentes'),
+                   medias = c(mean(df_game$Reviews[df_game$Content.Rating == "Everyone 10+"]),
+                              mean(df_game$Reviews[df_game$Content.Rating == "Mature 17+"]),
+                              mean(df_game$Reviews[df_game$Content.Rating == "Everyone"]),
+                              mean(df_game$Reviews[df_game$Content.Rating == "Teen"]
+                              )
+                   )
+)
+
+ggplot(df_g2, aes(y = df_g2$medias, x = df_g2$classificações)) +
+  geom_bar(stat = "identity", fill = '#56B4E9', color = 'black', width = .75) +
+  xlab('CLASSIFICAÇÕES') +
+  ylab('MÉDIAS') +
+  ggtitle('NÚMERO DE OPINIÕES POR CLASSIFICAÇÕES DE CONTEÚDO') +
+  theme_classic()
+
+```
+
+\newpage
+
+# Conclusão
+Então, extraindo informações do banco de dados a fim de saber em qual categoria de aplicativo seria o melhor para realizar um investimento, pôde-se observar que o número de opiniões da categoria dos jogos é muito maior do que as outras categorias. 
+
+Além disso, dentro dos jogos, o público apresentou um maior interesse pelos jogos gratuitos do que os pagos, além de apresentarem uma satisfação bem parecida com os dois tipos de aplicativos.
+
+Também, há um número maior de opiniões naqueles aplicativos com classificação de conteúdo para todos acima de dez anos.
+Ademais, é possível observar que a satisfação (avaliação) dos clientes não mudam significativamente de acordo com a mudança da gratuidade ou da classificação de conteúdo.
+
+Portanto, através dessas informações obtidas através dos gráficos, é possível afirmar que o melhor tipo de aplicativo para se investir é da categoria dos jogos, gratuitos e de classificação de conteúdo para todos acima de dez anos.
+
+
+\newpage
+
+# Referências
+
+<!--
+Nas referências, não esqueça de utilizar lista simples e *itálico*
+
+* 1. *SOBRENOME, Nome Abreviado. Título: subtítulo (se houver). Edição (se houver). Local de publicação: Editora, data de publicação da obra.* (livro)
+
+* 2.*AUTOR DO ARTIGO. Título do artigo. Título da Revista, (abreviado ou não) Local de Publicação, Número do Volume, Número do Fascículo, Páginas inicial-final, mês e ano*
+ (artigo)
+
+*3. *SOBRENOME DO AUTOR – nome do autor – título do Artigo – Ano – link – data de acesso (antes da data acrescenta-se a expressão acesso em:). O nome do autor pode ser omitido.* (site)
+
+-->
+
+\newpage
+
+# Anexos
+
+Segue o exemplo abaixo de como foi feito o gráfico que relaciona o número de opiniões com a gratuidade dos aplicativos da categoria de jogos. Desse modo, os outros gráficos foram feitos usando a mesma lógica.
+```{r exemplo, echo=TRUE, message=FALSE, warning=FALSE}
+df_g1 = data.frame(gratuidade = c('Gratuitos', 'Pagos'),
+                  medias = c(mean(df_game$Reviews
+                                  [df_game$Type == "Free"]),
+                             mean(df_game$Reviews
+                                  [df_game$Type == "Paid"])
+                             )
+                  )
+
+ggplot(df_g1, aes(y = df_g1$medias, x = df_g1$gratuidade)) +
+  geom_bar(stat = "identity", 
+           fill = '#56B4E9', 
+           color = 'black', 
+           width = .50) +
+  xlab('GRATUIDADE') +
+  ylab('MÉDIAS') +
+  ggtitle('MÉDIA DO NÚMERO DE OPINIÕES POR GRATUIDADE') +
+  theme_classic()
+```
+
+
+<!--
+Exclusivamente para anexos, a foto é adicionada em linguagem markdown, perdendo centralidade e legenda, mas ficando em seu exato local (leia mais no tutorial).
+
+EM ANEXOS, utilize
+
+![](nomedoarquivo.tipo)\
+
+para incluir
+
+Códigos são incluídos utilizando `` em cada linha. Não esqueça de pular linhas.
+
+Exemplo:
+`library(MASS)`
+ 
+`simular<- function(V, sigma2, beta){`
+
+ `X<- matrix(c(rep(1,dim(V)[1]),runif(dim(V)[1], 0, 100)), byrow=F, ncol=2)`
+ 
+ `betasp<- c()`
+ 
+ `betasc<- c()`
+ 
+ `for(i in 1:10000){`
+-->
