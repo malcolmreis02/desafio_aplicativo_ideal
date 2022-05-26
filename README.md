@@ -4,4 +4,4 @@
   com o uso das ferramentas necessárias, escolher a área de aplicativo ideal para realizar um investimento.</p>
 <p>Usei o R para obter as estatísticas e para a confecção dos gráficos que julguei necessário</p>
 <p>A explicação do desafio, a metodologia que usei para resolvê-lo, os resultados e a conclusão estão disponíveis <a href='https://malcolmreis02.github.io/desafio-aplicativo-ideal/'>nessa página</a>.</p>
-<p>Os códigos do R utilizados estão contidos neste repositório github</p>
+<p>Os códigos do R utilizados estão contidos neste repositório github.</p>
