@@ -1,7 +1,7 @@
 ---
 title: "Desafio - Trainee"
 author: "Malcolm dos Reis"
-date: "maio_2022"
+date: "Maio_2022"
 output:
   html_document:
     df_print: paged
@@ -125,7 +125,7 @@ ggplot(df_bar, aes(y = df_bar$medias, x = df_bar$categorias)) +
 ggplot(df_bar, aes(y = df_bar$medianas, x = df_bar$categorias)) +
   geom_bar(stat = "identity", fill = '#56B4E9', color = 'black', width = .75) +
   xlab('CATEGORIAS') +
-  ylab('MÉDIAS') +
+  ylab('MEDIANAS') +
   ggtitle('MEDIANA DO NÚMERO DE OPINIÕES POR CATEGORIA') +
   theme_classic()
 ```

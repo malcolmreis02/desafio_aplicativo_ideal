@@ -61,7 +61,7 @@ print(barplot)
 ggplot(df_bar, aes(y = df_bar$medianas, x = df_bar$categorias)) +
   geom_bar(stat = "identity", fill = 'blue', color = 'black') +
   xlab('CATEGORIAS') +
-  ylab('MÉDIAS') +
+  ylab('MEDIANAS') +
   ggtitle('MEDIANA DO NÚMERO DE AVALIAÇÕES POR CATEGORIA') +
   theme_classic()
 
