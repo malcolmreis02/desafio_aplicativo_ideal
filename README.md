@@ -3,6 +3,6 @@
 <p>O desafio era, através de um banco de dados da PlayStore contendo uma grande lista de aplicativos com suas respectivas categorias, avaliações e o número de opiniões,
   com o uso das ferramentas necessárias, escolher a área de aplicativo ideal para realizar um investimento.</p>
 <p>Usei o R para obter as estatísticas e para a confecção dos gráficos que julguei necessário</p>
-<p>A explicação do desafio, a metodologia que usei para resolvê-lo, os resultados e a conclusão estão disponíveis <a href='[https://malcolmreis02.github.io/desafio-aplicativo-ideal/](https://github.com/malcolmreis02/desafio_aplicativo_ideal/blob/main/Relatório.pdf)'>nessa página</a>.</p>
+<p>A explicação do desafio, a metodologia que usei para resolvê-lo, os resultados e a conclusão estão disponíveis no arquivo .pdf desse respositório.</p>
 <p>A explicação do desafio, a metodologia que usei para resolvê-lo, os resultados e a conclusão estão disponíveis <a href=''>nessa página</a>.</p>
 <p>Os códigos do R utilizados estão contidos neste repositório github.</p>
